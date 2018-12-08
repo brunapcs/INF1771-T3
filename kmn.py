@@ -8,9 +8,20 @@ def loadDataset(filename, split, trainingSet=[] , testSet=[]):
 		lines = csv.reader(csv_file, delimiter=',')
 		dataset = list(lines)
 		for x in range(len(dataset) - 1):
-			for y in range(11):
+			for y in range(17):
 				if (dataset[x][y]) != "?":
-					int(dataset[x][y])
+					if y < 11 or y == 17:
+						int(dataset[x][y])
+					if y == 11:
+						if dataset[x][y] == "m":
+							dataset[x][y] = 0
+						else:
+							dataset[x][y] = 1
+					if y == 13 or y == 14 or y == 16:
+						if dataset[x][y] == "yes":
+							dataset[x][y] = 1
+						else:
+							dataset[x][y] = 0
 			if random.random() < split:
 				trainingSet.append(dataset[x])
 			else:
@@ -19,9 +30,10 @@ def loadDataset(filename, split, trainingSet=[] , testSet=[]):
 
 def euclideanDistance(instance1, instance2, length):
 	distance = 0
-	for x in range(11):
-		if instance1[x] != "?" and instance2[x] != "?":
-				distance+= pow((int (instance1[x]) - int(instance2[x])), 2)
+	for x in range(18):
+		if( x != 12 and x!= 15):
+			if instance1[x] != "?" and instance2[x] != "?":
+					distance+= pow((int (instance1[x]) - int(instance2[x])), 2)
 	return math.sqrt(distance)
 
 
@@ -69,7 +81,7 @@ def main():
 	print('Test set: ' + repr(len(testSet)))
 	# generate predictions
 	predictions = []
-	k = 3
+	k = 5
 	for x in range(len(testSet)):
 		neighbors = getNeighbors(trainingSet, testSet[x], k)
 		result = getResponse(neighbors)
